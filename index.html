@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors Game</title>
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+        }
+
+        body {
+            background-color: #f0f9ff;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* Header Styles */
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #ff6b6b;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+        }
+
+        /* Container Styles */
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Mode Selection Screen */
+        .mode-selection {
+            padding: 30px;
+            text-align: center;
+        }
+
+        .mode-selection h2 {
+            font-size: 1.8rem;
+            color: #4d89ff;
+            margin-bottom: 30px;
+        }
+
+        .mode-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .mode-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            background-color: #4ecdc4;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .mode-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .mode-btn:active {
+            transform: translateY(1px);
+        }
+
+        .single-player-btn {
+            background-color: #ff8c42;
+        }
+
+        .multiplayer-btn {
+            background-color: #6a5acd;
+        }
+
+        /* Game Screen */
+        .game-screen {
+            display: none;
+            flex-direction: column;
+            height: 600px;
+        }
+
+        /* Single Player Screen */
+        .single-player-screen {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 20px;
+            background-color: #f8f9fa;
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .score {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .score-label {
+            font-size: 1rem;
+            color: #6c757d;
+        }
+
+        .score-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #343a40;
+        }
+
+        .battle-area {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-bottom: 30px;
+        }
+
+        .player-choice, .computer-choice {
+            width: 120px;
+            height: 120px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .vs {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ff6b6b;
+        }
+
+        .result {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            height: 30px;
+            margin-bottom: 20px;
+            color: #4d89ff;
+        }
+
+        .options {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .option {
+            width: 80px;
+            height: 80px;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .option:hover {
+            transform: scale(1.1);
+        }
+
+        .rock {
+            background-color: #ff8c42;
+            color: white;
+        }
+
+        .paper {
+            background-color: #4ecdc4;
+            color: white;
+        }
+
+        .scissors {
+            background-color: #6a5acd;
+            color: white;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .control-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            opacity: 0.9;
+        }
+
+        .home-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .rules-btn {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        /* Split Screen for Multiplayer */
+        .multiplayer-screen {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .player-section {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .player1-section {
+            border-bottom: 5px dashed #ff8c42;
+            background-color: rgba(255, 140, 66, 0.1);
+        }
+
+        .player2-section {
+            background-color: rgba(106, 90, 205, 0.1);
+        }
+
+        .player-header {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .player-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #343a40;
+        }
+
+        .player-score {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .player1-score {
+            color: #ff8c42;
+        }
+
+        .player2-score {
+            color: #6a5acd;
+        }
+
+        .player-options {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .ready-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .ready-btn:hover {
+            opacity: 0.9;
+        }
+
+        .ready-btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .multiplayer-result-area {
+            padding: 10px 20px;
+            text-align: center;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .multiplayer-result {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #4d89ff;
+        }
+
+        .player-choice-display {
+            font-size: 2rem;
+            margin: 0 10px;
+        }
+
+        /* Rules Popup */
+        .rules-popup {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            display: none;
+        }
+
+        .rules-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 80%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .rules-content h2 {
+            text-align: center;
+            color: #ff6b6b;
+            margin-bottom: 20px;
+        }
+
+        .rules-list {
+            margin-bottom: 20px;
+        }
+
+        .rules-list li {
+            margin-bottom: 10px;
+            list-style-type: none;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .rules-list li:before {
+            content: "•";
+            color: #4ecdc4;
+            font-size: 1.5rem;
+            position: absolute;
+            left: 0;
+            top: -5px;
+        }
+
+        .close-rules {
+            display: block;
+            margin: 0 auto;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #ff6b6b;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .close-rules:hover {
+            opacity: 0.9;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
+
+        .win-animation {
+            animation: bounce 1s ease;
+        }
+
+        .selected-animation {
+            animation: pulse 0.5s ease infinite;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .game-screen {
+                height: auto;
+                min-height: 500px;
+            }
+
+            .battle-area {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+
+            .vs {
+                transform: rotate(90deg);
+                margin: 10px 0;
+            }
+
+            .player-choice, .computer-choice {
+                width: 100px;
+                height: 100px;
+            }
+
+            .option {
+                width: 70px;
+                height: 70px;
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .mode-buttons {
+                flex-direction: column;
+            }
+
+            .option {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Rock Paper Scissors</h1>
+    </header>
+
+    <div class="container">
+        <!-- Mode Selection Screen -->
+        <div class="mode-selection">
+            <h2>Choose Game Mode</h2>
+            <div class="mode-buttons">
+                <button class="mode-btn single-player-btn">Single Player</button>
+                <button class="mode-btn multiplayer-btn">Multiplayer</button>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div class="game-screen">
+            <!-- Single Player Mode -->
+            <div class="single-player-screen">
+                <div class="score-board">
+                    <div class="score">
+                        <span class="score-label">You</span>
+                        <span class="score-value player-score">0</span>
+                    </div>
+                    <div class="score">
+                        <span class="score-label">Computer</span>
+                        <span class="score-value computer-score">0</span>
+                    </div>
+                </div>
+
+                <div class="battle-area">
+                    <div class="player-choice">?</div>
+                    <div class="vs">VS</div>
+                    <div class="computer-choice">?</div>
+                </div>
+
+                <div class="result"></div>
+
+                <div class="options">
+                    <button class="option rock">✊</button>
+                    <button class="option paper">✋</button>
+                    <button class="option scissors">✌️</button>
+                </div>
+
+                <div class="controls">
+                    <button class="control-btn home-btn">Home</button>
+                    <button class="control-btn rules-btn">Rules</button>
+                </div>
+            </div>
+
+            <!-- Multiplayer Mode -->
+            <div class="multiplayer-screen">
+                <!-- Player 1 Section -->
+                <div class="player-section player1-section">
+                    <div class="player-header">
+                        <span class="player-name">Player 1</span>
+                        <span class="player-score player1-score">0</span>
+                    </div>
+
+                    <div class="player-options">
+                        <button class="option rock player1-option" data-player="1" data-choice="rock">✊</button>
+                        <button class="option paper player1-option" data-player="1" data-choice="paper">✋</button>
+                        <button class="option scissors player1-option" data-player="1" data-choice="scissors">✌️</button>
+                    </div>
+
+                    <button class="ready-btn player1-ready" disabled>Ready</button>
+                </div>
+
+                <!-- Result Area -->
+                <div class="multiplayer-result-area">
+                    <div class="multiplayer-result"></div>
+                </div>
+
+                <!-- Player 2 Section -->
+                <div class="player-section player2-section">
+                    <div class="player-header">
+                        <span class="player-name">Player 2</span>
+                        <span class="player-score player2-score">0</span>
+                    </div>
+
+                    <div class="player-options">
+                        <button class="option rock player2-option" data-player="2" data-choice="rock">✊</button>
+                        <button class="option paper player2-option" data-player="2" data-choice="paper">✋</button>
+                        <button class="option scissors player2-option" data-player="2" data-choice="scissors">✌️</button>
+                    </div>
+
+                    <button class="ready-btn player2-ready" disabled>Ready</button>
+                </div>
+
+                <div class="controls" style="padding: 10px;">
+                    <button class="control-btn home-btn">Home</button>
+                    <button class="control-btn rules-btn">Rules</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rules Popup -->
+        <div class="rules-popup">
+            <div class="rules-content">
+                <h2>Game Rules</h2>
+                <ul class="rules-list">
+                    <li>Rock (✊) beats Scissors (✌️)</li>
+                    <li>Scissors (✌️) beats Paper (✋)</li>
+                    <li>Paper (✋) beats Rock (✊)</li>
+                    <li>If both players choose the same option, it's a tie!</li>
+                </ul>
+                <button class="close-rules">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const modeSelection = document.querySelector('.mode-selection');
+        const gameScreen = document.querySelector('.game-screen');
+        const singlePlayerScreen = document.querySelector('.single-player-screen');
+        const multiplayerScreen = document.querySelector('.multiplayer-screen');
+        const singlePlayerBtn = document.querySelector('.single-player-btn');
+        const multiplayerBtn = document.querySelector('.multiplayer-btn');
+        const playerChoice = document.querySelector('.player-choice');
+        const computerChoice = document.querySelector('.computer-choice');
+        const result = document.querySelector('.result');
+        const playerScore = document.querySelector('.player-score');
+        const computerScore = document.querySelector('.computer-score');
+        const options = document.querySelectorAll('.single-player-screen .option');
+        const homeButtons = document.querySelectorAll('.home-btn');
+        const rulesButtons = document.querySelectorAll('.rules-btn');
+        const rulesPopup = document.querySelector('.rules-popup');
+        const closeRules = document.querySelector('.close-rules');
+
+        // Multiplayer Elements
+        const player1Options = document.querySelectorAll('.player1-option');
+        const player2Options = document.querySelectorAll('.player2-option');
+        const player1Ready = document.querySelector('.player1-ready');
+        const player2Ready = document.querySelector('.player2-ready');
+        const player1Score = document.querySelector('.player1-score');
+        const player2Score = document.querySelector('.player2-score');
+        const multiplayerResult = document.querySelector('.multiplayer-result');
+
+        // Game State
+        let scores = {
+            player: 0,
+            computer: 0,
+            player1: 0,
+            player2: 0
+        };
+
+        let multiplayerChoices = {
+            player1: null,
+            player2: null
+        };
+
+        // Event Listeners
+        singlePlayerBtn.addEventListener('click', startSinglePlayerGame);
+        multiplayerBtn.addEventListener('click', startMultiplayerGame);
+        
+        options.forEach(option => {
+            option.addEventListener('click', playSinglePlayer);
+        });
+
+        homeButtons.forEach(button => {
+            button.addEventListener('click', returnHome);
+        });
+
+        rulesButtons.forEach(button => {
+            button.addEventListener('click', showRules);
+        });
+
+        closeRules.addEventListener('click', hideRules);
+
+        player1Options.forEach(option => {
+            option.addEventListener('click', (e) => selectMultiplayerOption(e, 1));
+        });
+
+        player2Options.forEach(option => {
+            option.addEventListener('click', (e) => selectMultiplayerOption(e, 2));
+        });
+
+        player1Ready.addEventListener('click', () => playerReady(1));
+        player2Ready.addEventListener('click', () => playerReady(2));
+
+        // Functions
+        function startSinglePlayerGame() {
+            modeSelection.style.display = 'none';
+            gameScreen.style.display = 'flex';
+            singlePlayerScreen.style.display = 'flex';
+            multiplayerScreen.style.display = 'none';
+            resetScores();
+        }
+
+        function startMultiplayerGame() {
+            modeSelection.style.display = 'none';
+            gameScreen.style.display = 'flex';
+            singlePlayerScreen.style.display = 'none';
+            multiplayerScreen.style.display = 'flex';
+            resetScores();
+            resetMultiplayerChoices();
+        }
+
+        function returnHome() {
+            gameScreen.style.display = 'none';
+            modeSelection.style.display = 'block';
+            resetScores();
+            resetDisplay();
+            resetMultiplayerChoices();
+        }
+
+        function resetScores() {
+            scores.player = 0;
+            scores.computer = 0;
+            scores.player1 = 0;
+            scores.player2 = 0;
+            playerScore.textContent = '0';
+            computerScore.textContent = '0';
+            player1Score.textContent = '0';
+            player2Score.textContent = '0';
+        }
+
+        function resetDisplay() {
+            playerChoice.textContent = '?';
+            computerChoice.textContent = '?';
+            result.textContent = '';
+            multiplayerResult.textContent = '';
+            playerChoice.classList.remove('win-animation');
+            computerChoice.classList.remove('win-animation');
+        }
+
+        function resetMultiplayerChoices() {
+            multiplayerChoices.player1 = null;
+            multiplayerChoices.player2 = null;
+            player1Ready.disabled = true;
+            player2Ready.disabled = true;
+            
+            // Reset selected styles
+            player1Options.forEach(option => {
+                option.classList.remove('selected-animation');
+            });
+            
+            player2Options.forEach(option => {
+                option.classList.remove('selected-animation');
+            });
+        }
+
+        function showRules() {
+            rulesPopup.style.display = 'flex';
+        }
+
+        function hideRules() {
+            rulesPopup.style.display = 'none';
+        }
+
+        function playSinglePlayer(e) {
+            // Get player choice
+            const playerSelection = e.target.classList[1]; // rock, paper, or scissors
+            
+            // Generate computer choice
+            const choices = ['rock', 'paper', 'scissors'];
+            const computerSelection = choices[Math.floor(Math.random() * 3)];
+            
+            // Display choices
+            playerChoice.textContent = getEmoji(playerSelection);
+            computerChoice.textContent = getEmoji(computerSelection);
+            
+            // Determine winner
+            const winner = determineWinner(playerSelection, computerSelection);
+            
+            // Update score and display result
+            if (winner === 'player') {
+                scores.player++;
+                playerScore.textContent = scores.player;
+                result.textContent = 'You win!';
+                playerChoice.classList.add('win-animation');
+                setTimeout(() => {
+                    playerChoice.classList.remove('win-animation');
+                }, 1000);
+            } else if (winner === 'computer') {
+                scores.computer++;
+                computerScore.textContent = scores.computer;
+                result.textContent = 'Computer wins!';
+                computerChoice.classList.add('win-animation');
+                setTimeout(() => {
+                    computerChoice.classList.remove('win-animation');
+                }, 1000);
+            } else {
+                result.textContent = "It's a tie!";
+            }
+        }
+
+        function selectMultiplayerOption(e, player) {
+            const choice = e.target.dataset.choice;
+            const playerKey = `player${player}`;
+            
+            // Reset all animations for this player
+            document.querySelectorAll(`.${playerKey}-option`).forEach(option => {
+                option.classList.remove('selected-animation');
+            });
+            
+            // Add animation to selected option
+            e.target.classList.add('selected-animation');
+            
+            // Store choice
+            multiplayerChoices[playerKey] = choice;
+            
+            // Enable ready button
+            document.querySelector(`.${playerKey}-ready`).disabled = false;
+        }
+
+        function playerReady(player) {
+            const playerKey = `player${player}`;
+            const readyBtn = document.querySelector(`.${playerKey}-ready`);
+            
+            // Disable options and ready button
+            document.querySelectorAll(`.${playerKey}-option`).forEach(option => {
+                option.disabled = true;
+            });
+            
+            readyBtn.disabled = true;
+            readyBtn.textContent = 'Waiting...';
+            
+            // Check if both players are ready
+            if (multiplayerChoices.player1 && multiplayerChoices.player2) {
+                setTimeout(evaluateMultiplayerRound, 500);
+            }
+        }
+
+        function evaluateMultiplayerRound() {
+            const winner = determineWinner(multiplayerChoices.player1, multiplayerChoices.player2);
+            
+            // Display choices and result
+            multiplayerResult.innerHTML = `
+                Player 1: <span class="player-choice-display">${getEmoji(multiplayerChoices.player1)}</span> 
+                vs 
+                Player 2: <span class="player-choice-display">${getEmoji(multiplayerChoices.player2)}</span>
+            `;
+            
+            // Update score and display result
+            if (winner === 'player') {
+                scores.player1++;
+                player1Score.textContent = scores.player1;
+                multiplayerResult.innerHTML += '<br>Player 1 wins!';
+            } else if (winner === 'computer') {
+                scores.player2++;
+                player2Score.textContent = scores.player2;
+                multiplayerResult.innerHTML += '<br>Player 2 wins!';
+            } else {
+                multiplayerResult.innerHTML += "<br>It's a tie!";
+            }
+            
+            // Reset for next round
+            setTimeout(() => {
+                // Re-enable all options
+                player1Options.forEach(option => {
+                    option.disabled = false;
+                    option.classList.remove('selected-animation');
+                });
+                
+                player2Options.forEach(option => {
+                    option.disabled = false;
+                    option.classList.remove('selected-animation');
+                });
+                
+                // Reset ready buttons
+                player1Ready.textContent = 'Ready';
+                player2Ready.textContent = 'Ready';
+                
+                // Reset choices
+                resetMultiplayerChoices();
+            }, 2000);
+        }
+
+        function determineWinner(playerChoice, computerChoice) {
+            if (playerChoice === computerChoice) {
+                return 'tie';
+            }
+            
+            if (
+                (playerChoice === 'rock' && computerChoice === 'scissors') ||
+                (playerChoice === 'paper' && computerChoice === 'rock') ||
+                (playerChoice === 'scissors' && computerChoice === 'paper')
+            ) {
+                return 'player';
+            } else {
+                return 'computer';
+            }
+        }
+
+        function getEmoji(choice) {
+            switch(choice) {
+                case 'rock':
+                    return '✊';
+                case 'paper':
+                    return '✋';
+                case 'scissors':
+                    return '✌️';
+                default:
+                    return '?';
+            }
+        }
+    </script>
+</body>
+</html>
